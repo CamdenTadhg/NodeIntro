@@ -2,14 +2,16 @@ const fs = require('fs');
 const process = require('process');
 const axios = require('axios');
 
-async function cat(path){
-    try{
-        const data = await fs.promises.readFile(path, 'utf8');
-        console.log(data);
-    }
-    catch (err){
-        console.error(`Error reading ${path[i]}: ${err}`);
-        process.exit(1);
+async function cat(array){
+    for (let i=0; i<array.length; i++){
+        try{
+            const data = await fs.promises.readFile(array[i], 'utf8');
+            console.log(data);
+        }
+        catch (err){
+            console.error(`Error reading ${array[i]}: ${err}`);
+            process.exit(1);
+        }
     }
 }
 
@@ -27,14 +29,16 @@ function catWrite(path1, path2){
     })
 }
 
-async function webCat(url){
-    try{
-        const data = await axios.get(url);
-        console.log(data.data);
-    }
-    catch(err){
-        console.error(`Error fetching ${url}: ${err}`);
-        process.exit(1);
+async function webCat(array){
+    for (let i=0; i<array.length; i++){
+        try{
+            const data = await axios.get(array[i]);
+            console.log(data.data);
+        }
+        catch(err){
+            console.error(`Error fetching ${array[i]}: ${err}`);
+            process.exit(1);
+        }
     }
 }
 
@@ -61,14 +65,18 @@ if (process.argv[2] === '--out'){
     }
 } else {
     if (process.argv[2].startsWith('http')){
+        let argArray = []
         for (let i = 2; i < process.argv.length; i++){
-            webCat(process.argv[i]);
+            argArray.push(process.argv[i])
         }
+        webCat(argArray);
+
     }
     else {
+        let argArray = []
         for (let i = 2; i < process.argv.length; i++){
-            cat(process.argv[i]);
+            argArray.push(process.argv[i])
         }
+        cat(argArray);
     }
 }
-
